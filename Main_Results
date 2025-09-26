@@ -1,0 +1,647 @@
+# Purpose:     Script for the Main Analyses and Result of Climate Anomalies & Ambient Air Pollution and Miscarriage.
+# Manuscript DOI: 10.1097/EE9.0000000000000420.  
+# Author: 			Prince M. Amegbor
+# Date Created:	April 9th, 2025 by Prince M. Amegbor
+# *******************************************************************************************************************************/
+rm(list = ls())
+gc(reset=TRUE)
+
+# Load libraries
+library(INLA)
+library(sf)          
+library(tidyverse)   
+library(openxlsx)    
+library(dplyr)
+library(purrr)
+
+
+
+###Load mamnsucript data  
+GDHS_2 <- readRDS("~/GMHS_ENVS_2017.rds" )  
+
+###priors - Set prior on precision
+prec.prior1 <- list(theta =list(prior="pc.prec",param=c(0.5,0.01))) 
+
+prec.prior2 <- list(prec = list(prior = "loggamma", param = c(0.01, 0.01)))
+
+prec.prior3 <- list(prec = list(prior = "pc.prec",
+                                param = c(1, 0.01)))
+
+
+
+
+# -------------------------------------------------------------------------------------------
+# Effect of climate anomalies and ambient air pollutants - Model 1 in Figure 1
+# -------------------------------------------------------------------------------------------
+Mod_1a <- inla(pregMC ~ Tmp_z + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_1a)
+
+Mod_1b <- inla(pregMC ~ Tmx_z + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+Mod_1c <- inla(pregMC ~ Tmn_z + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+Mod_1d <- inla(pregMC ~ Preci_z + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+Mod_2a <- inla(pregMC ~ PM + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_2a)
+
+Mod_2b <- inla(pregMC ~ NO + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_2b)
+
+Mod_2c <- inla(pregMC ~ CO + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+Mod_2d <- inla(pregMC ~ SO + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+Mod_2e <- inla(pregMC ~ SU + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_2e)
+
+Mod_2f <- inla(pregMC ~ Ozone + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+
+Mod_2g <- inla(pregMC ~ OC + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+Mod_2h <- inla(pregMC ~ BC + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+Mod_2i <- inla(pregMC ~ EVI + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+
+# ------------------------------------------------
+# Function to extract tidy model summary
+# ------------------------------------------------
+tidy_inla_summary <- function(model, model_name) {
+  model$summary.fixed[, c("mean", "sd", "0.025quant", "0.975quant")] %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column("variable") %>%
+    rename(lci = `0.025quant`, uci = `0.975quant`) %>%
+    mutate(across(c(mean, lci, uci), exp),
+           model = model_name, .before = 1)
+}
+
+# ------------------------------------------------
+# Collect models in a named list
+# ------------------------------------------------
+models <- list(
+  "Mod1a" = Mod_1a, "Mod1b" = Mod_1b, "Mod1c" = Mod_1c, "Mod1d" = Mod_1d,
+  "Mod2a" = Mod_2a, "Mod2b" = Mod_2b, "Mod2c" = Mod_2c, "Mod2d" = Mod_2d,
+  "Mod2e" = Mod_2e, "Mod2f" = Mod_2f, "Mod2g" = Mod_2g, "Mod2h" = Mod_2h,
+  "Mod2i" = Mod_2i
+)
+
+# ------------------------------------------------
+# Apply function to all models
+# ------------------------------------------------
+results <- imap(models, tidy_inla_summary)
+
+
+
+# ------------------------------------------------
+# Save to Excel (one sheet per model)
+# ------------------------------------------------
+write.xlsx(results, file = "outputs/SES_Adjusted_pregMC.xlsx", overwrite = T)
+
+
+
+# ------------------------------------------------------------------------------------------
+# Effect of climate anomalies and ambient air pollutants - Model 2 in Figure 1
+# ------------------------------------------------------------------------------------------
+
+# Model 1a
+Mod_1a <- inla(pregMC ~ Tmp_z + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_1a)
+# Model 1b
+Mod_1b <- inla(pregMC ~ Tmx_z + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 1c
+Mod_1c <- inla(pregMC ~ Tmn_z + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 1d
+Mod_1d <- inla(pregMC ~ Preci_z + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2a
+Mod_2a <- inla(pregMC ~ PM + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2b
+Mod_2b <- inla(pregMC ~ NO + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2c
+Mod_2c <- inla(pregMC ~ CO + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2d
+Mod_2d <- inla(pregMC ~ SO + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2e
+Mod_2e <- inla(pregMC ~ SU + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2f
+Mod_2f <- inla(pregMC ~ Ozone + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+
+# Model 2g
+Mod_2g <- inla(pregMC ~ OC + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2h
+Mod_2h <- inla(pregMC ~ BC + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+# Model 2i
+Mod_2i <- inla(pregMC ~ EVI + 
+                 factor(qhwlthi) + factor(ph_cook_clean) +  
+                 factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                 f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                 f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                 f(DIST_ID, model = "iid", hyper = prec.prior3),
+               data=GDHS_2, family = "binomial", Ntrials = 1,
+               control.family = list(link = "cloglog"), verbose=TRUE,
+               control.compute = list(dic=TRUE, waic=TRUE))
+
+
+
+
+models_adj <- list(
+  "Mod1a_adj" = Mod_1a, "Mod1b_adj" = Mod_1b, "Mod1c_adj" = Mod_1c, "Mod1d_adj" = Mod_1d,
+  "Mod2a_adj" = Mod_2a, "Mod2b_adj" = Mod_2b, "Mod2c_adj" = Mod_2c, "Mod2d_adj" = Mod_2d,
+  "Mod2e_adj" = Mod_2e, "Mod2f_adj" = Mod_2f, "Mod2g_adj" = Mod_2g, "Mod2h_adj" = Mod_2h,
+  "Mod2i_adj" = Mod_2i
+)
+
+results_adj <- imap(models_adj, tidy_inla_summary)
+
+
+write.xlsx(results_adj , file = "outputs/SES_Adjusted_pregMC.xlsx", overwrite = T)
+
+
+# -----------------------------------------------------------------------------------------------------------
+# Figure 1 Plot - Data Preprocessed in Excel by structuring for the intended forest plot
+# -----------------------------------------------------------------------------------------------------------
+
+library(ggplot2)
+library(readxl)
+library(ggpubr)
+library(ggh4x)
+
+theme_set(theme_pubr())
+
+
+
+######### In-Utero 
+my_sheet_names <- excel_sheets("Fixed_Effect_Models.xlsx")
+my_sheets <- lapply(my_sheet_names, function(x) read_excel("Fixed_Effect_Models.xlsx", 
+                                                           sheet = x))
+names(my_sheets) <- my_sheet_names
+
+list2env(my_sheets, envir=.GlobalEnv)
+str(Single)
+
+##these are the results of the incremental modelling approach
+Single$Models <- factor (Single$Models, 
+                         levels = c("Model 1", "Model 2"), 
+                         labels = c("Model 1", "Model 2"))
+
+Single$Exposure <- factor (Single$Exposure, 
+                           levels = c("Mean Temperature anomaly", "Maximum Temperature anomaly", "Precipitation anomaly", "PM2.5 -  µgm-3",
+                                      "Carbon Monoxide  - ppbv", "Nitrogen dioxide", "Sulphur Dioxide  -  µgm-3", "Ozone  - Dobson unit",
+                                      "Enhanced Vegetation Index (EVI)"), 
+                           labels = c("Mean Temperature anomaly", "Maximum Temperature anomaly", "Precipitation anomaly", "PM2.5 -  µgm-3",
+                                      "Carbon Monoxide  - ppbv", "Nitrogen dioxide", "Sulphur Dioxide  -  µgm-3", "Ozone  - Dobson unit",
+                                      "Enhanced Vegetation Index (EVI)"))
+
+
+
+Pre_FE <- ggplot(Single, aes(x=mean, y = Exposure, 
+                             colour=Models)) + 
+  scale_color_brewer(palette="Set1",
+                     breaks=c("Model 1","Model 2")) + 
+  geom_vline(aes(xintercept = 1), size = .25, linetype = "dashed") + 
+  geom_point(position = position_dodge(width=.75)) + 
+  scale_x_log10() + 
+  geom_errorbarh(aes(xmin = lci, xmax=uci), position=position_dodge(width=.75), height=0) + 
+  labs(x="Odds Ratio", y="Exposure Factors", colour="Models", title = "") +
+  guides(
+    y = guide_axis_nested(delim = "&", n.dodge = 1),
+    y.sec = guide_axis_manual(
+      breaks = as.vector(outer(c(-0.15, 0.23), 1:9, "+")),
+      labels = Single$estimates
+    )
+  ) + 
+  theme_classic() + 
+  theme(
+    axis.text.y.left = element_text(margin = margin(r = 5, l = 5)),
+    ggh4x.axis.nesttext.y = element_text(margin = margin(r = 6, l = 6)),
+    ggh4x.axis.nestline.y = element_blank())
+
+
+
+
+tiff("Figure_1.tiff", units="in", width=8, height=10, res=300)
+Pre_FE
+dev.off()
+
+
+
+
+
+# ------------------------------------------------
+# Multi-exposure models Table 2
+# ------------------------------------------------
+Mod_2 <- inla(pregMC ~ Tmp_z + Tmx_z + Preci_z + EVI + 
+                f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                f(DIST_ID, model = "iid", hyper = prec.prior3),
+              data=GDHS_2, family = "binomial", Ntrials = 1,
+              control.family = list(link = "cloglog"), verbose=TRUE,
+              control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_2)
+
+Mod_3 <- inla(pregMC ~ PM + NO + CO + SO + Ozone + EVI +
+                f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                f(DIST_ID, model = "iid", hyper = prec.prior3),
+              data=GDHS_2, family = "binomial", Ntrials = 1,
+              control.family = list(link = "cloglog"), verbose=TRUE,
+              control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_3)
+
+
+Mod_4 <- inla(pregMC ~ Tmp_z + Tmx_z + Preci_z + PM + NO + CO + SO + Ozone + EVI +
+                f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                f(DIST_ID, model = "iid", hyper = prec.prior3),
+              data=GDHS_2, family = "binomial", Ntrials = 1,
+              control.family = list(link = "cloglog"), verbose=TRUE,
+              control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_4)
+
+Mod_5 <- inla(pregMC ~ Tmp_z + Tmx_z + Preci_z + PM + NO + CO + SO + Ozone + EVI +
+                factor(qhwlthi) + factor(ph_cook_clean) +  
+                factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+                f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+                f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+                f(DIST_ID, model = "iid", hyper = prec.prior3),
+              data=GDHS_2, family = "binomial", Ntrials = 1,
+              control.family = list(link = "cloglog"), verbose=TRUE,
+              control.compute = list(dic=TRUE, waic=TRUE))
+summary(Mod_5)
+
+multi_env_models <- list(
+  "Mod2_env" = Mod_2,
+  "Mod3_env" = Mod_3,
+  "Mod4_env" = Mod_4,
+  "Mod5_env" = Mod_5
+)
+
+multi_env_results <- imap(multi_env_models, tidy_inla_summary)
+
+
+out_path_multi <- "outputs/Multi_Exposure_pregMC.xlsx"
+
+write.xlsx(out_path_multi, file = "outputs/Multi_Exposure_pregMC.xlsx", overwrite = T)
+
+
+
+
+# ---------------------------------------------------------------------------------------------
+# Effect of climate anomalies and ambient air pollutants modified by vegetation - Table 3
+# ---------------------------------------------------------------------------------------------
+# Calculate the 25th and 75th percentiles
+evi_percentiles <- quantile(GDHS_2$EVI, probs = c(0.25, 0.75), na.rm = TRUE)
+
+# Create the new categorical variable based on the percentiles
+GDHS_2$EVI_cat <- cut(GDHS_2$EVI,
+                      breaks = c(-Inf, evi_percentiles[1], evi_percentiles[2], Inf),
+                      labels = c("low", "medium", "high"),
+                      right = FALSE)  # right = FALSE to make sure the range is < 25th and > 75th percentile
+
+table(GDHS_2$EVI_cat)
+
+GDHS_2$EVI_cat2 <- as.numeric(GDHS_2$EVI_cat)
+
+
+#Unadjusted
+TMP <- inla(pregMC ~ 1 +  Tmp_z:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+              f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+              f(DIST_ID, model = "iid", hyper = prec.prior3),
+            data=GDHS_2, family = "binomial", Ntrials = 1,
+            control.family = list(link = "cloglog"), verbose=TRUE,
+            control.compute = list(dic=TRUE, waic=TRUE))
+
+
+TMX<- inla(pregMC ~ 1 +  Tmx_z:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+             f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+             f(DIST_ID, model = "iid", hyper = prec.prior3),
+           data=GDHS_2, family = "binomial", Ntrials = 1,
+           control.family = list(link = "cloglog"), verbose=TRUE,
+           control.compute = list(dic=TRUE, waic=TRUE))
+
+PRE<- inla(pregMC ~ 1 +  Preci_z:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+             f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+             f(DIST_ID, model = "iid", hyper = prec.prior3),
+           data=GDHS_2, family = "binomial", Ntrials = 1,
+           control.family = list(link = "cloglog"), verbose=TRUE,
+           control.compute = list(dic=TRUE, waic=TRUE))
+
+
+PM<- inla(pregMC ~ 1 + PM:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+NO<- inla(pregMC ~ 1 +  NO:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+CO<- inla(pregMC ~ 1 +  CO:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+SO<- inla(pregMC ~ 1 +  SO:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+O3<- inla(pregMC ~ 1 +  Ozone:factor(EVI_cat2) + f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+
+
+models_unadj <- list(
+  TMP = TMP, TMX = TMX, PRE = PRE, PM = PM,
+  CO = CO, NO = NO, SO = SO, O3 = O3
+)
+
+results_unadj <- map(models_unadj, tidy_inla_summary)
+
+write.xlsx(results_unadj, file = "Effect_Modification_EVI_unadj.xlsx",overwrite = TRUE)
+
+# Fully adjusted models
+TMP <- inla(pregMC ~ 1 +  Tmp_z:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+              factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+              f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+              f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+              f(DIST_ID, model = "iid", hyper = prec.prior3),
+            data=GDHS_2, family = "binomial", Ntrials = 1,
+            control.family = list(link = "cloglog"), verbose=TRUE,
+            control.compute = list(dic=TRUE, waic=TRUE))
+
+
+TMX<- inla(pregMC ~ 1 +  Tmx_z:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+             factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+             f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+             f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+             f(DIST_ID, model = "iid", hyper = prec.prior3),
+           data=GDHS_2, family = "binomial", Ntrials = 1,
+           control.family = list(link = "cloglog"), verbose=TRUE,
+           control.compute = list(dic=TRUE, waic=TRUE))
+
+PRE<- inla(pregMC ~ 1 +  Preci_z:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+             factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+             f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+             f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+             f(DIST_ID, model = "iid", hyper = prec.prior3),
+           data=GDHS_2, family = "binomial", Ntrials = 1,
+           control.family = list(link = "cloglog"), verbose=TRUE,
+           control.compute = list(dic=TRUE, waic=TRUE))
+
+
+PM<- inla(pregMC ~ 1 + PM:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+            factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) +
+            f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+NO<- inla(pregMC ~ 1 +  NO:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+            factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+            f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+CO<- inla(pregMC ~ 1 +  CO:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+            factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+            f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+SO<- inla(pregMC ~ 1 +  SO:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+            factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+            f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+O3<- inla(pregMC ~ 1 +  Ozone:factor(EVI_cat2) + factor(qhwlthi) + factor(ph_cook_clean) +  
+            factor(ph_wtr_improve) + factor(ph_sani_improve) + factor(EDU) + factor(qtype) + 
+            f(inla.group(wt), model="rw1", scale.model=TRUE, hyper = prec.prior1) + 
+            f(Reg_ID, model = "iid", hyper = prec.prior3) + 
+            f(DIST_ID, model = "iid", hyper = prec.prior3),
+          data=GDHS_2, family = "binomial", Ntrials = 1,
+          control.family = list(link = "cloglog"), verbose=TRUE,
+          control.compute = list(dic=TRUE, waic=TRUE))
+
+models_adj <- list(
+  TMP = TMP_adj, TMX = TMX_adj, PRE = PRE_adj, PM = PM_adj,
+  CO = CO_adj, NO = NO_adj, SO = SO_adj, O3 = O3_adj
+)
+
+results_adj <- map(models_adj, tidy_inla_summary)
+
+# Export to Excel
+write.xlsx(results_adj,file = "Effect_Modification_EVI_full.xlsx",overwrite = TRUE)
+
+
